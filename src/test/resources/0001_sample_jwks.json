@@ -1,0 +1,30 @@
+{
+  "keys": [
+    {
+      "alg": "RS256",
+      "kty": "RSA",
+      "use": "sig",
+      "x5c": [
+        "sample_x5c",
+        "sample2_x5c"
+      ],
+      "n": "sample_n",
+      "e": "sample_e",
+      "kid": "kid",
+      "x5t": "sample_x5t"
+    },
+    {
+      "alg": "RS256",
+      "kty": "RSA",
+      "use": "enc",
+      "x5c": [
+        "samplex_x5c",
+        "samplex2_x5c"
+      ],
+      "n": "sample_n",
+      "e": "sample_e",
+      "kid": "kidx",
+      "x5t": "samplex_x5t"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id "io.spring.dependency-management" version "1.0.4.RELEASE"
+}
+
+group 'io.github.pawelkorus'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+ext {
+    springBootVersion = '1.5.2.RELEASE'
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.security.oauth:spring-security-oauth2'
+
+    compile 'com.auth0:java-jwt:3.3.0'
+    compile 'com.nimbusds:nimbus-jose-jwt:4.11'
+    compile 'com.nimbusds:oauth2-oidc-sdk:3.4.1'
+    compile 'javax.json:javax.json-api:1.1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.assertj:assertj-core:3.9.0'
+    testCompile 'org.glassfish:javax.json:1.1'
+}
+
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+}
+
+apply plugin: 'java'
+
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
