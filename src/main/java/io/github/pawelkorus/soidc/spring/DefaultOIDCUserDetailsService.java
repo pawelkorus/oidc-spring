@@ -1,11 +1,13 @@
 package io.github.pawelkorus.soidc.spring;
 
 import io.github.pawelkorus.soidc.IdTokenPayload;
-import org.springframework.security.core.userdetails.UserDetails;
+import io.github.pawelkorus.soidc.PublicClaims;
 
 public class DefaultOIDCUserDetailsService implements OIDCUserDetailsService {
     @Override
-    public UserDetails loadUser(IdTokenPayload idTokenPayload) {
-        return OIDCUserDetails.builder(idTokenPayload).build();
+    public OIDCUserDetails loadUser(IdTokenPayload idTokenPayload) {
+        return OIDCUserDetails.builder()
+                .sub(idTokenPayload.getAsString(PublicClaims.sub.name()))
+                .build();
     }
 }

@@ -1,7 +1,5 @@
 package io.github.pawelkorus.soidc.spring;
 
-import io.github.pawelkorus.soidc.IdTokenPayload;
-import io.github.pawelkorus.soidc.PublicClaims;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,19 +50,23 @@ public class OIDCUserDetails implements UserDetails {
         return true;
     }
 
-    public static OIDCUserDetailsBuilder builder(IdTokenPayload idTokenPayload) {
-        return new OIDCUserDetailsBuilder(idTokenPayload);
+    public static OIDCUserDetailsBuilder builder() {
+        return new OIDCUserDetailsBuilder();
     }
 
     public static class OIDCUserDetailsBuilder {
-        private IdTokenPayload idTokenPayload;
+        private String sub;
 
-        public OIDCUserDetailsBuilder(IdTokenPayload idTokenPayload) {
-            this.idTokenPayload = idTokenPayload;
+        public OIDCUserDetailsBuilder() {
+        }
+
+        public OIDCUserDetailsBuilder sub(String v) {
+            this.sub = v;
+            return this;
         }
 
         public OIDCUserDetails build() {
-            return new OIDCUserDetails(idTokenPayload.getAsString(PublicClaims.sub.name()));
+            return new OIDCUserDetails(this.sub);
         }
     }
 }
