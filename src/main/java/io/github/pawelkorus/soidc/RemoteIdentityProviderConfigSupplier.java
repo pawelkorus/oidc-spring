@@ -1,6 +1,8 @@
 package io.github.pawelkorus.soidc;
 
 import javax.json.*;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -10,25 +12,27 @@ import java.util.stream.Collectors;
 
 public class RemoteIdentityProviderConfigSupplier implements Supplier<IdentityProviderConfig> {
 
-    private final String configUrl;
+    private final URL configUrl;
 
-    public RemoteIdentityProviderConfigSupplier(String url) {
+    private RemoteIdentityProviderConfigSupplier(URL url) {
         this.configUrl = url;
     }
 
-    public static RemoteIdentityProviderConfigSupplier build(String url) {
+    public static RemoteIdentityProviderConfigSupplier build(@NotNull URL url) {
         return new RemoteIdentityProviderConfigSupplier(url);
     }
 
     @Override
     public IdentityProviderConfig get() {
-        InputStream inputStream = null;
+        URLConnection connection = null;
         try {
-            URL url = new URL(configUrl);
-            URLConnection connection = url.openConnection();
-            inputStream = connection.getInputStream();
+            connection = configUrl.openConnection();
+        } catch (IOException ex) {
+            throw new RuntimeException("Can't connect to resource to location under following url: " + configUrl.toString());
+        }
 
-            JsonReader jsonReader = Json.createReader(connection.getInputStream());
+        try (InputStream inputStream = connection.getInputStream()) {
+            JsonReader jsonReader = Json.createReader(inputStream);
             JsonObject jsonObject = jsonReader.readObject();
 
             IdentityProviderConfig providerMetadata = new IdentityProviderConfig();
@@ -47,14 +51,6 @@ public class RemoteIdentityProviderConfigSupplier implements Supplier<IdentityPr
             return providerMetadata;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
         }
     }
 
