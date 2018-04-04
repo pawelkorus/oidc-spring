@@ -1,14 +1,12 @@
 package io.github.pawelkorus.soidc.oauth0;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.ECDSAKeyProvider;
 import io.github.pawelkorus.soidc.JsonWebKey;
 import org.apache.commons.codec.binary.Base64;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.*;
@@ -24,7 +22,7 @@ public class AlgorithmFactory {
             KeyFactory factory = KeyFactory.getInstance("RSA");
             RSAPublicKey pub = (RSAPublicKey) factory.generatePublic(spec);
 
-            return Algorithm.RSA256(pub);
+            return Algorithm.RSA256(pub, null);
         } else if ("ES256".compareTo(jwk.getAlg()) == 0) {
             BigInteger x = new BigInteger(1, Base64.decodeBase64(jwk.getStringParameter("x")));
             BigInteger y = new BigInteger(1, Base64.decodeBase64(jwk.getStringParameter("y")));
@@ -35,24 +33,7 @@ public class AlgorithmFactory {
             KeyFactory keyFactory = KeyFactory.getInstance("EC");
             ECPublicKey ecPublicKey = (ECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
 
-            Algorithm alg = Algorithm.ECDSA256(new ECDSAKeyProvider() {
-                @Override
-                public ECPublicKey getPublicKeyById(String keyId) {
-                    return ecPublicKey;
-                }
-
-                @Override
-                public ECPrivateKey getPrivateKey() {
-                    return null;
-                }
-
-                @Override
-                public String getPrivateKeyId() {
-                    return null;
-                }
-            });
-
-            return alg;
+            return Algorithm.ECDSA256(ecPublicKey, null);
         }
 
         throw new NoSuchAlgorithmException(String.format("Can't recognise %s algorithm", jwk.getAlg()));
