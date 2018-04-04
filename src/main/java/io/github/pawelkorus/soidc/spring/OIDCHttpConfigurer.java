@@ -15,10 +15,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigurer, HttpSecurity> {
@@ -86,7 +83,7 @@ public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigure
         private String clientId;
         private String clientSecret;
         private String redirectUrl;
-        private List<String> requestScopes = new ArrayList<>();
+        private Set<String> requestScopes = new HashSet<>();
         private IdentityProviderConfig identityProviderConfig;
         private JsonWebKeyProvider jsonWebKeyProvider;
         private RequestMatcher requestMatcher;
@@ -141,7 +138,7 @@ public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigure
             return this.requestMatcher;
         }
 
-        private List<String> requestScopes() {
+        private Set<String> requestScopes() {
             return this.requestScopes;
         }
     }
@@ -160,7 +157,7 @@ public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigure
 
         IdentityProviderResourceDetails identityProviderResourceDetails = new IdentityProviderResourceDetails(identityProviderConfig, clientConfig);
         if (!identityProviderConfigurer.requestScopes().isEmpty()) {
-            identityProviderResourceDetails.setScope(identityProviderConfigurer.requestScopes());
+            identityProviderResourceDetails.setScope(new ArrayList<>(identityProviderConfigurer.requestScopes()));
         }
 
         return identityProviderResourceDetails;
