@@ -26,6 +26,8 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.9.0'
     testCompile 'org.glassfish:javax.json:1.1'
     testCompile 'uk.co.jemos.podam:podam:7.1.1.RELEASE'
+    testCompile 'com.auth0:java-jwt:3.3.0'
+    testCompile 'com.nimbusds:nimbus-jose-jwt:4.11'
 }
 
 dependencyManagement {
