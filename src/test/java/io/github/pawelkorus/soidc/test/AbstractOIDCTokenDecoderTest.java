@@ -1,6 +1,5 @@
 package io.github.pawelkorus.soidc.test;
 
-import com.sun.istack.internal.Nullable;
 import io.github.pawelkorus.soidc.DecodeException;
 import io.github.pawelkorus.soidc.IdTokenPayload;
 import io.github.pawelkorus.soidc.JsonWebKey;
@@ -62,7 +61,7 @@ public abstract class AbstractOIDCTokenDecoderTest {
 
     protected abstract OIDCTokenDecoder provideDecoder();
 
-    private void decodeAndVerify(String token, @Nullable JsonWebKey jsonWebKey) throws Exception {
+    private void decodeAndVerify(String token, JsonWebKey jsonWebKey) throws Exception {
         IdTokenPayload idTokenPayload = tokenDecoder.verifyAndDecode(token, (id) -> Optional.ofNullable(jsonWebKey));
 
         assertThat(idTokenPayload.getAsString("testClaim")).isEqualTo("claimValue");
