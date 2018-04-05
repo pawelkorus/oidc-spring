@@ -20,11 +20,7 @@ public class OIDCOAuth0TokenDecoder implements OIDCTokenDecoder {
 
         Algorithm algorithm = AlgorithmFactory.build(jsonWebKey);
 
-        JWTVerifier verification = JWT.require(algorithm)
-            //.withAudience(clientConfig.getClientId())
-            //.withIssuer(identityProviderData.getIssuer())
-            .acceptLeeway(200)
-            .build();
+        JWTVerifier verification = JWT.require(algorithm).build();
 
         verification.verify(token);
 
