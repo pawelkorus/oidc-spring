@@ -86,96 +86,78 @@ public class ClaimAssertionsTest {
 
     @Test
     public void assertIss_should_pass_if_iss_claim_value_match() throws Exception {
-        when(idTokenPayload.getAsString(PublicClaims.iss.name())).thenReturn(TEST_ISSUER);
+        when(idTokenPayload.getAsString(CommonClaim.iss.name())).thenReturn(TEST_ISSUER);
         ClaimAssertions.assertIss(TEST_ISSUER).check(idTokenPayload);
-        verify(idTokenPayload).getAsString(PublicClaims.iss.name());
+        verify(idTokenPayload).getAsString(CommonClaim.iss.name());
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void assertIss_should_fail_if_iss_claim_is_null() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.iss.name())).thenReturn(true);
+        when(idTokenPayload.isNull(CommonClaim.iss.name())).thenReturn(true);
         ClaimAssertions.assertIss(TEST_ISSUER).check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void assertIss_should_fail_if_iss_claim_doesnt_match() throws Exception {
-        when(idTokenPayload.getAsString(PublicClaims.iss.name())).thenReturn(TEST_ISSUER + "some_additional_data");
+        when(idTokenPayload.getAsString(CommonClaim.iss.name())).thenReturn(TEST_ISSUER + "some_additional_data");
         ClaimAssertions.assertIss(TEST_ISSUER).check(idTokenPayload);
     }
 
     @Test
     public void assertAud_should_pass_if_aud_claim_string_and_match() throws Exception {
-        when(idTokenPayload.getAsString(PublicClaims.aud.name())).thenReturn(TEST_AUD[0]);
+        when(idTokenPayload.getAsString(CommonClaim.aud.name())).thenReturn(TEST_AUD[0]);
         ClaimAssertions.assertAud(TEST_AUD[0]).check(idTokenPayload);
-        verify(idTokenPayload, atLeast(1)).getAsString(PublicClaims.aud.name());
+        verify(idTokenPayload, atLeast(1)).getAsString(CommonClaim.aud.name());
     }
 
     @Test
     public void assertAud_should_pass_if_aud_claim_value_array_and_match() throws Exception {
-        when(idTokenPayload.getAsStringList(PublicClaims.aud.name())).thenReturn(Arrays.asList(TEST_AUD));
+        when(idTokenPayload.getAsStringList(CommonClaim.aud.name())).thenReturn(Arrays.asList(TEST_AUD));
         ClaimAssertions.assertAud(TEST_AUD[0]).check(idTokenPayload);
-        verify(idTokenPayload, atLeast(1)).getAsStringList(PublicClaims.aud.name());
+        verify(idTokenPayload, atLeast(1)).getAsStringList(CommonClaim.aud.name());
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void assertAud_should_fail_if_claim_is_null() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.aud.name())).thenReturn(true);
+        when(idTokenPayload.isNull(CommonClaim.aud.name())).thenReturn(true);
         ClaimAssertions.assertAud(TEST_AUD[0]).check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void assertAud_should_fail_if_claim_array_doesnt_match() throws Exception {
-        when(idTokenPayload.getAsStringList(PublicClaims.aud.name())).thenReturn(Arrays.asList("testAudXXXXX"));
+        when(idTokenPayload.getAsStringList(CommonClaim.aud.name())).thenReturn(Arrays.asList("testAudXXXXX"));
         ClaimAssertions.assertAud(TEST_AUD[0]).check(idTokenPayload);
     }
 
     @Test
     public void assertSub_should_pass_if_sub_is_present() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.sub.name())).thenReturn(false);
+        when(idTokenPayload.isNull(CommonClaim.sub.name())).thenReturn(false);
         ClaimAssertions.assertSub().check(idTokenPayload);
-        verify(idTokenPayload).isNull(PublicClaims.sub.name());
+        verify(idTokenPayload).isNull(CommonClaim.sub.name());
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void assertSub_should_fail_if_sub_is_not_present() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.sub.name())).thenReturn(true);
+        when(idTokenPayload.isNull(CommonClaim.sub.name())).thenReturn(true);
         ClaimAssertions.assertSub().check(idTokenPayload);
     }
 
     @Test
     public void assertExp_should_pass_if_claim_date_is_after_now() throws Exception {
-        when(idTokenPayload.getAsInstant(PublicClaims.exp.name())).thenReturn(Instant.now().plus(Period.ofDays(1)));
+        when(idTokenPayload.getAsInstant(CommonClaim.exp.name())).thenReturn(Instant.now().plus(Period.ofDays(1)));
         ClaimAssertions.assertExp().check(idTokenPayload);
-        verify(idTokenPayload).getAsInstant(PublicClaims.exp.name());
+        verify(idTokenPayload).getAsInstant(CommonClaim.exp.name());
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void assertExp_should_fail_if_claim_date_is_before_now() throws Exception {
-        when(idTokenPayload.getAsInstant(PublicClaims.exp.name())).thenReturn(Instant.now().minus(Period.ofDays(1)));
+        when(idTokenPayload.getAsInstant(CommonClaim.exp.name())).thenReturn(Instant.now().minus(Period.ofDays(1)));
         ClaimAssertions.assertExp().check(idTokenPayload);
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void assertExp_should_fail_if_claim_is_not_present() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.exp.name())).thenReturn(true);
+        when(idTokenPayload.isNull(CommonClaim.exp.name())).thenReturn(true);
         ClaimAssertions.assertExp().check(idTokenPayload);
-    }
-
-    @Test
-    public void assertNbf_should_pass_if_claim_date_is_before_now() throws Exception {
-        when(idTokenPayload.getAsInstant(PublicClaims.nbf.name())).thenReturn(Instant.now());
-        ClaimAssertions.assertNbf().check(idTokenPayload);
-    }
-
-    @Test(expected = ClaimNotPresentException.class)
-    public void assertNbf_should_fail_if_claim_is_not_present() throws Exception {
-        when(idTokenPayload.isNull(PublicClaims.nbf.name())).thenReturn(true);
-        ClaimAssertions.assertNbf().check(idTokenPayload);
-    }
-
-    @Test(expected = ClaimValueMismatchException.class)
-    public void assertNbf_should_fail_if_claim_date_is_after_now() throws Exception {
-        when(idTokenPayload.getAsInstant(PublicClaims.nbf.name())).thenReturn(Instant.now().plus(Duration.ofMinutes(1)));
-        ClaimAssertions.assertNbf().check(idTokenPayload);
     }
 }

@@ -1,12 +1,14 @@
 package io.github.pawelkorus.soidc;
 
-public enum PublicClaims {
+public enum CommonClaim {
     iss,
     sub,
     aud,
     exp,
-    nbf,
     iat,
-    jti,
+    auth_time,
+    nonce,
+    acr,
+    amr,
     azp
 }

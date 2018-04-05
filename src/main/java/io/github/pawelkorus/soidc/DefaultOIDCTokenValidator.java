@@ -17,8 +17,8 @@ public class DefaultOIDCTokenValidator implements ClaimAssertion {
 
         // 4. If the ID Token contains multiple audiences, the Client SHOULD verify that an azp Claim is present.
         // 5. If an azp (authorized party) Claim is present, the Client SHOULD verify that its client_id is the Claim Value.
-        if (tokenPayload.getAsStringList(PublicClaims.aud.name()) != null || !tokenPayload.isNull(PublicClaims.azp.name())) {
-            ClaimAssertions.assertEquals(PublicClaims.azp.name(), clientConfig.getClientId()).check(tokenPayload);
+        if (tokenPayload.getAsStringList(CommonClaim.aud.name()) != null || !tokenPayload.isNull(CommonClaim.azp.name())) {
+            ClaimAssertions.assertEquals(CommonClaim.azp.name(), clientConfig.getClientId()).check(tokenPayload);
         }
 
         ClaimAssertions.assertExp().check(tokenPayload);

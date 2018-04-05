@@ -1,7 +1,7 @@
 package io.github.pawelkorus.soidc.spring;
 
+import io.github.pawelkorus.soidc.CommonClaim;
 import io.github.pawelkorus.soidc.IdTokenPayload;
-import io.github.pawelkorus.soidc.PublicClaims;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ public class DefaultOIDCUserDetailsServiceTest {
 
     @Test
     public void should_create_user_details_from_id_token_payload() {
-        when(idTokenPayload.getAsString(PublicClaims.sub.name())).thenReturn(SAMPLE_SUB);
+        when(idTokenPayload.getAsString(CommonClaim.sub.name())).thenReturn(SAMPLE_SUB);
 
         OIDCUserDetails userDetails = defaultOIDCUserDetailsService.loadUser(idTokenPayload);
 

@@ -37,98 +37,98 @@ public class DefaultOIDCTokenValidatorTest {
         when(clientConfig.getClientId()).thenReturn(TEST_CLIENT_ID);
         when(identityProviderConfig.getIssuer()).thenReturn(TEST_ISS);
 
-        whenClaimValue(PublicClaims.iss, TEST_ISS);
-        whenClaimValue(PublicClaims.aud, TEST_CLIENT_ID);
-        whenClaimValue(PublicClaims.exp, Instant.now().plus(Duration.ofDays(2)));
-        whenClaimValue(PublicClaims.iat, Instant.now().minus(Duration.ofDays(2)));
-        whenClaimValue(PublicClaims.azp, TEST_CLIENT_ID);
+        whenClaimValue(CommonClaim.iss, TEST_ISS);
+        whenClaimValue(CommonClaim.aud, TEST_CLIENT_ID);
+        whenClaimValue(CommonClaim.exp, Instant.now().plus(Duration.ofDays(2)));
+        whenClaimValue(CommonClaim.iat, Instant.now().minus(Duration.ofDays(2)));
+        whenClaimValue(CommonClaim.azp, TEST_CLIENT_ID);
     }
 
     @Test
     public void should_pass_if_everything_is_ok() throws Exception {
         defaultOIDCTokenValidator.check(idTokenPayload);
-        verify(idTokenPayload, atLeast(1)).getAsString(PublicClaims.iss.name());
-        verify(idTokenPayload, atLeast(1)).getAsString(PublicClaims.aud.name());
-        verify(idTokenPayload, atLeast(1)).getAsString(PublicClaims.azp.name());
-        verify(idTokenPayload, atLeast(1)).getAsInstant(PublicClaims.exp.name());
-        verify(idTokenPayload, atLeast(1)).getAsInstant(PublicClaims.iat.name());
+        verify(idTokenPayload, atLeast(1)).getAsString(CommonClaim.iss.name());
+        verify(idTokenPayload, atLeast(1)).getAsString(CommonClaim.aud.name());
+        verify(idTokenPayload, atLeast(1)).getAsString(CommonClaim.azp.name());
+        verify(idTokenPayload, atLeast(1)).getAsInstant(CommonClaim.exp.name());
+        verify(idTokenPayload, atLeast(1)).getAsInstant(CommonClaim.iat.name());
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void should_fail_if_iss_is_not_present() throws Exception {
-        whenClaimValue(PublicClaims.iss, (String) null);
+        whenClaimValue(CommonClaim.iss, (String) null);
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_iss_not_match() throws Exception {
-        whenClaimValue(PublicClaims.iss, "xxx");
+        whenClaimValue(CommonClaim.iss, "xxx");
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void should_fail_if_aud_is_not_present() throws Exception {
-        whenClaimValue(PublicClaims.aud, (String) null);
+        whenClaimValue(CommonClaim.aud, (String) null);
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_aud_doesnt_match() throws Exception {
-        whenClaimValue(PublicClaims.aud, "xxx");
+        whenClaimValue(CommonClaim.aud, "xxx");
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_aud_is_array_and_doesnt_contain_aud() throws Exception {
-        whenClaimValue(PublicClaims.aud, (String) null);
-        whenClaimValue(PublicClaims.aud, Arrays.asList("xxx", "yyy"));
+        whenClaimValue(CommonClaim.aud, (String) null);
+        whenClaimValue(CommonClaim.aud, Arrays.asList("xxx", "yyy"));
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_aud_is_array_and_azp_is_doesnt_match() throws Exception {
-        whenClaimValue(PublicClaims.aud, (String) null);
-        whenClaimValue(PublicClaims.aud, Arrays.asList("xxx", TEST_CLIENT_ID));
-        whenClaimValue(PublicClaims.azp, "xxx");
+        whenClaimValue(CommonClaim.aud, (String) null);
+        whenClaimValue(CommonClaim.aud, Arrays.asList("xxx", TEST_CLIENT_ID));
+        whenClaimValue(CommonClaim.azp, "xxx");
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void should_fail_if_exp_claim_is_not_present() throws Exception {
-        whenClaimValue(PublicClaims.exp, (Instant) null);
+        whenClaimValue(CommonClaim.exp, (Instant) null);
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_exp_is_incorrect() throws Exception {
-        whenClaimValue(PublicClaims.exp, Instant.now().minus(Duration.ofDays(2)));
+        whenClaimValue(CommonClaim.exp, Instant.now().minus(Duration.ofDays(2)));
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimNotPresentException.class)
     public void should_fail_if_iat_claim_is_not_present() throws Exception {
-        whenClaimValue(PublicClaims.iat, (Instant) null);
+        whenClaimValue(CommonClaim.iat, (Instant) null);
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
     @Test(expected = ClaimValueMismatchException.class)
     public void should_fail_if_iat_is_incorrect() throws Exception {
-        whenClaimValue(PublicClaims.iat, Instant.now().plus(Duration.ofDays(2)));
+        whenClaimValue(CommonClaim.iat, Instant.now().plus(Duration.ofDays(2)));
         defaultOIDCTokenValidator.check(idTokenPayload);
     }
 
-    private void whenClaimValue(PublicClaims publicClaims, String value) {
-        when(idTokenPayload.getAsString(publicClaims.name())).thenReturn(value);
-        when(idTokenPayload.isNull(publicClaims.name())).thenReturn(value == null);
+    private void whenClaimValue(CommonClaim commonClaim, String value) {
+        when(idTokenPayload.getAsString(commonClaim.name())).thenReturn(value);
+        when(idTokenPayload.isNull(commonClaim.name())).thenReturn(value == null);
     }
 
-    private void whenClaimValue(PublicClaims publicClaims, Instant value) {
-        when(idTokenPayload.getAsInstant(publicClaims.name())).thenReturn(value);
-        when(idTokenPayload.isNull(publicClaims.name())).thenReturn(value == null);
+    private void whenClaimValue(CommonClaim commonClaim, Instant value) {
+        when(idTokenPayload.getAsInstant(commonClaim.name())).thenReturn(value);
+        when(idTokenPayload.isNull(commonClaim.name())).thenReturn(value == null);
     }
 
-    private void whenClaimValue(PublicClaims publicClaims, List<String> value) {
-        when(idTokenPayload.getAsStringList(publicClaims.name())).thenReturn(value);
-        when(idTokenPayload.isNull(publicClaims.name())).thenReturn(value == null);
+    private void whenClaimValue(CommonClaim commonClaim, List<String> value) {
+        when(idTokenPayload.getAsStringList(commonClaim.name())).thenReturn(value);
+        when(idTokenPayload.isNull(commonClaim.name())).thenReturn(value == null);
     }
 }

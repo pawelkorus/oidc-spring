@@ -46,41 +46,33 @@ public final class ClaimAssertions {
     }
 
     public static ClaimAssertion assertIss(@NotNull String issuer) throws ClaimValueMismatchException, ClaimNotPresentException {
-        return compound(assertRequired(PublicClaims.iss.name()), assertEquals(PublicClaims.iss.name(), issuer));
+        return compound(assertRequired(CommonClaim.iss.name()), assertEquals(CommonClaim.iss.name(), issuer));
     }
 
     public static ClaimAssertion assertSub() throws ClaimValueMismatchException, ClaimNotPresentException {
-        return assertRequired(PublicClaims.sub.name());
+        return assertRequired(CommonClaim.sub.name());
     }
 
     public static ClaimAssertion assertAud(@NotNull String audience) throws ClaimValueMismatchException, ClaimNotPresentException {
         return compound(
-            assertRequired(PublicClaims.aud.name()),
+                assertRequired(CommonClaim.aud.name()),
             idTokenPayload -> {
-                if (idTokenPayload.getAsString(PublicClaims.aud.name()) != null) {
-                    throwIf(idTokenPayload.getAsString(PublicClaims.aud.name()).compareTo(audience) != 0, createMessage(PublicClaims.aud.name(), audience, idTokenPayload.getAsString(PublicClaims.aud.name())));
-                } else if (idTokenPayload.getAsStringList(PublicClaims.aud.name()) != null) {
-                    throwIf(!idTokenPayload.getAsStringList(PublicClaims.aud.name()).contains(audience), createMessage(PublicClaims.aud.name(), audience, idTokenPayload.getAsStringList(PublicClaims.aud.name())));
+                if (idTokenPayload.getAsString(CommonClaim.aud.name()) != null) {
+                    throwIf(idTokenPayload.getAsString(CommonClaim.aud.name()).compareTo(audience) != 0, createMessage(CommonClaim.aud.name(), audience, idTokenPayload.getAsString(CommonClaim.aud.name())));
+                } else if (idTokenPayload.getAsStringList(CommonClaim.aud.name()) != null) {
+                    throwIf(!idTokenPayload.getAsStringList(CommonClaim.aud.name()).contains(audience), createMessage(CommonClaim.aud.name(), audience, idTokenPayload.getAsStringList(CommonClaim.aud.name())));
                 } else {
-                    throw new ClaimValueMismatchException(String.format("Invalid type of %s claim", PublicClaims.aud.name()));
+                    throw new ClaimValueMismatchException(String.format("Invalid type of %s claim", CommonClaim.aud.name()));
                 }
             });
     }
 
     public static ClaimAssertion assertExp() throws ClaimValueMismatchException, ClaimNotPresentException {
-        return compound(assertRequired(PublicClaims.exp.name()), assertDateAfterNow(PublicClaims.exp.name()));
-    }
-
-    public static ClaimAssertion assertNbf() throws ClaimValueMismatchException, ClaimNotPresentException {
-        return compound(assertRequired(PublicClaims.nbf.name()), assertDateBeforeNow(PublicClaims.nbf.name()));
+        return compound(assertRequired(CommonClaim.exp.name()), assertDateAfterNow(CommonClaim.exp.name()));
     }
 
     public static ClaimAssertion assertIat() throws ClaimValueMismatchException, ClaimNotPresentException {
-        return compound(assertRequired(PublicClaims.iat.name()), assertDateBeforeNow(PublicClaims.iat.name()));
-    }
-
-    public static ClaimAssertion assertJti() throws ClaimValueMismatchException, ClaimNotPresentException {
-        return assertRequired(PublicClaims.jti.name());
+        return compound(assertRequired(CommonClaim.iat.name()), assertDateBeforeNow(CommonClaim.iat.name()));
     }
 
     private static void throwIf(boolean cond, String message) throws ClaimValueMismatchException {
