@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.pawelkorus.soidc.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 
 public class OIDCOAuth0TokenDecoder implements OIDCTokenDecoder {
 
@@ -21,7 +22,7 @@ public class OIDCOAuth0TokenDecoder implements OIDCTokenDecoder {
 
             Algorithm algorithm = AlgorithmFactory.build(jsonWebKey);
 
-            JWTVerifier verification = JWT.require(algorithm).build();
+            JWTVerifier verification = JWT.require(algorithm).acceptLeeway(Duration.ofMinutes(5).toMillis()).build();
 
             verification.verify(token);
 
