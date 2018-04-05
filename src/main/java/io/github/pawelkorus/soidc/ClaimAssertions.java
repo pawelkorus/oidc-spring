@@ -1,6 +1,7 @@
 package io.github.pawelkorus.soidc;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
 
@@ -23,8 +24,8 @@ public final class ClaimAssertions {
         return idTokenPayload -> {
             Instant actual = idTokenPayload.getAsInstant(claimName);
             if (actual == null) return;
-            Instant now = Instant.now();
-            throwIf(now.isBefore(actual), String.format("Incorrect %s claim value. Expected date before noew %s, but got %s", claimName, String.valueOf(now), String.valueOf(actual)));
+            Instant expected = Instant.now().plus(Duration.ofMinutes(5));
+            throwIf(expected.isBefore(actual), String.format("Incorrect %s claim value. Expected date before %s, but got %s", claimName, String.valueOf(expected), String.valueOf(actual)));
         };
     }
 
@@ -32,8 +33,8 @@ public final class ClaimAssertions {
         return idTokenPayload -> {
             Instant actual = idTokenPayload.getAsInstant(claimName);
             if (actual == null) return;
-            Instant now = Instant.now();
-            throwIf(now.isAfter(actual), String.format("Incorrect claim %s value. Expected date after now %s, but got %s", claimName, String.valueOf(now), String.valueOf(actual)));
+            Instant expected = Instant.now().minus(Duration.ofMinutes(5));
+            throwIf(expected.isAfter(actual), String.format("Incorrect claim %s value. Expected date after %s, but got %s", claimName, String.valueOf(expected), String.valueOf(actual)));
         };
     }
 
