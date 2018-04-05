@@ -1,5 +1,7 @@
 package io.github.pawelkorus.soidc.test;
 
+import com.sun.istack.internal.Nullable;
+import io.github.pawelkorus.soidc.DecodeException;
 import io.github.pawelkorus.soidc.IdTokenPayload;
 import io.github.pawelkorus.soidc.JsonWebKey;
 import io.github.pawelkorus.soidc.OIDCTokenDecoder;
@@ -7,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -24,19 +25,25 @@ public abstract class AbstractOIDCTokenDecoderTest {
 
     @Test
     public void rs256_signature() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.hnJfI92ZxelOh7zQzuXzyV1ceVWbNQJ4bBW-W37thvg4gLNR1Wf8pimjBtO_9VG8dzi1gYVpy62is8kk9IAu1A";
-        JsonWebKey jsonWebKey = rs256Jwk();
-        decodeAndVerify(token, jsonWebKey);
+        decodeAndVerify(rs256Token(), rs256Jwk());
     }
 
     @Test
     public void es256_signature() throws Exception {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.MrvWQao-7KkODozfLEfUnZi9aFbHPFKhiG1PWGmCj7br7MEC2YjxC0JMeuT0szzzkb88Mfay3p5IZHpRqX_Orw";
-        JsonWebKey jsonWebKey = es256Jwk();
-        decodeAndVerify(token, jsonWebKey);
+        decodeAndVerify(es256Token(), es256Jwk());
     }
 
-    @Test(expected = NoSuchAlgorithmException.class)
+    @Test(expected = DecodeException.class)
+    public void should_throw_exception_if_can_cant_find_jwk() throws Exception {
+        decodeAndVerify(rs256Token(), null);
+    }
+
+    @Test(expected = DecodeException.class)
+    public void should_throw_exception_id_cant_parse_token() throws Exception {
+        decodeAndVerify("invalid_token", rs256Jwk());
+    }
+
+    @Test(expected = DecodeException.class)
     public void should_throw_exception_if_jwk_alg_is_not_known() throws Exception {
         String rs256Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.hnJfI92ZxelOh7zQzuXzyV1ceVWbNQJ4bBW-W37thvg4gLNR1Wf8pimjBtO_9VG8dzi1gYVpy62is8kk9IAu1A";
 
@@ -46,7 +53,7 @@ public abstract class AbstractOIDCTokenDecoderTest {
         decodeAndVerify(rs256Token, jsonWebKey);
     }
 
-    @Test
+    @Test(expected = DecodeException.class)
     public void should_throw_exception_if_jwk_alg_doesnt_match_token_alg() throws Exception {
         String rs256Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.hnJfI92ZxelOh7zQzuXzyV1ceVWbNQJ4bBW-W37thvg4gLNR1Wf8pimjBtO_9VG8dzi1gYVpy62is8kk9IAu1A";
         JsonWebKey jsonWebKey = es256Jwk();
@@ -55,10 +62,18 @@ public abstract class AbstractOIDCTokenDecoderTest {
 
     protected abstract OIDCTokenDecoder provideDecoder();
 
-    private void decodeAndVerify(String token, JsonWebKey jsonWebKey) throws Exception {
-        IdTokenPayload idTokenPayload = tokenDecoder.verifyAndDecode(token, (id) -> Optional.of(jsonWebKey));
+    private void decodeAndVerify(String token, @Nullable JsonWebKey jsonWebKey) throws Exception {
+        IdTokenPayload idTokenPayload = tokenDecoder.verifyAndDecode(token, (id) -> Optional.ofNullable(jsonWebKey));
 
         assertThat(idTokenPayload.getAsString("testClaim")).isEqualTo("claimValue");
+    }
+
+    private String rs256Token() {
+        return "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.hnJfI92ZxelOh7zQzuXzyV1ceVWbNQJ4bBW-W37thvg4gLNR1Wf8pimjBtO_9VG8dzi1gYVpy62is8kk9IAu1A";
+    }
+
+    private String es256Token() {
+        return "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJ0ZXN0Q2xhaW0iOiJjbGFpbVZhbHVlIn0.MrvWQao-7KkODozfLEfUnZi9aFbHPFKhiG1PWGmCj7br7MEC2YjxC0JMeuT0szzzkb88Mfay3p5IZHpRqX_Orw";
     }
 
     private JsonWebKey es256Jwk() {
