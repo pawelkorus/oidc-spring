@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.github.pawelkorus.soidc.springboot.OIDCAutoConfiguration,\
+io.github.pawelkorus.soidc.springboot.OIDCOAuth0AutoConfiguration,\
+io.github.pawelkorus.soidc.springboot.OIDCNimbusAutoConfiguration
