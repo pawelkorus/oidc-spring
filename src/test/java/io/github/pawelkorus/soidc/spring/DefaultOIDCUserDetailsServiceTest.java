@@ -9,8 +9,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultOIDCUserDetailsServiceTest {
@@ -39,6 +41,17 @@ public class DefaultOIDCUserDetailsServiceTest {
         assertThat(userDetails.getAuthorities()).hasSize(1);
         assertThat(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)).contains("ROLE_USER");
         assertThat(userDetails.isEnabled()).isTrue();
+
+        Stream.of(CommonClaim.sub, CommonClaim.name, CommonClaim.email, CommonClaim.birthday,
+                CommonClaim.gender, CommonClaim.locale, CommonClaim.family_name, CommonClaim.given_name,
+                CommonClaim.middle_name, CommonClaim.nickname, CommonClaim.picture, CommonClaim.preferred_username,
+                CommonClaim.profile, CommonClaim.website, CommonClaim.zoneinfo)
+                .forEach(claim -> {
+                    verify(idTokenPayload).getAsString(claim.name());
+                });
+        verify(idTokenPayload).getAsInstant(CommonClaim.updated_at.name());
+        verify(idTokenPayload).getAsBoolean(CommonClaim.email_verified.name());
+        verifyNoMoreInteractions(idTokenPayload);
     }
 
 }

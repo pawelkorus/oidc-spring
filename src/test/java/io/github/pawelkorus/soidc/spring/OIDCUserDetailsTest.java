@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.time.Instant;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
@@ -11,13 +13,21 @@ public class OIDCUserDetailsTest {
 
     private static String SAMPLE_EMAIL = "sampleEmail@domain.com";
     private static String SAMPLE_SUB = "sampleSub";
+    private static Instant SAMPLE_INSTANT = Instant.now();
 
     @Test
     public void should_build_user_details() {
         OIDCUserDetails oidcUserDetails = OIDCUserDetails.builder()
                 .sub(SAMPLE_SUB)
                 .email(SAMPLE_EMAIL, true)
-                .names("sampleName", "sampleGivenName", "sampleMiddleName", "sampleFamilyName")
+                .names("sampleName", "sampleGivenName", "sampleMiddleName", "sampleFamilyName", "sampleNickName")
+                .preferredUsername("samplePreferredUsername")
+                .birthday("sampleBirthday")
+                .locale("sampleLocale")
+                .zoneInfo("sampleZoneInfo")
+                .urls("samplePictureUrl", "sampleProfileUrl", "sampleWebsiteUrl")
+                .gender("sampleGender")
+                .updatedAt(SAMPLE_INSTANT)
                 .build();
 
         assertThat(oidcUserDetails.getPassword()).isNull();
@@ -33,6 +43,16 @@ public class OIDCUserDetailsTest {
         assertThat(oidcUserDetails.getGivenName()).isEqualTo("sampleGivenName");
         assertThat(oidcUserDetails.getMiddleName()).isEqualTo("sampleMiddleName");
         assertThat(oidcUserDetails.getFamilyName()).isEqualTo("sampleFamilyName");
+        assertThat(oidcUserDetails.getNickname()).isEqualTo("sampleNickName");
+        assertThat(oidcUserDetails.getPreferredUsername()).isEqualTo("samplePreferredUsername");
+        assertThat(oidcUserDetails.getBirthday()).isEqualTo("sampleBirthday");
+        assertThat(oidcUserDetails.getLocale()).isEqualTo("sampleLocale");
+        assertThat(oidcUserDetails.getZoneInfo()).isEqualTo("sampleZoneInfo");
+        assertThat(oidcUserDetails.getProfile()).isEqualTo("sampleProfileUrl");
+        assertThat(oidcUserDetails.getPicture()).isEqualTo("samplePictureUrl");
+        assertThat(oidcUserDetails.getWebsite()).isEqualTo("sampleWebsiteUrl");
+        assertThat(oidcUserDetails.getGender()).isEqualTo("sampleGender");
+        assertThat(oidcUserDetails.updatedAt()).isEqualTo(SAMPLE_INSTANT);
     }
 
 

@@ -19,6 +19,16 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
     private String middleName;
     private String familyName;
     private boolean emailVerified;
+    private String nickName;
+    private String preferredUsername;
+    private String profileURL;
+    private String pictureURL;
+    private String websiteURL;
+    private String gender;
+    private String birthdayYYYYYMMDD;
+    private String zoneInfo;
+    private String locale;
+    private Instant updatedAt;
 
     public OIDCUserDetails(String sub) {
         this.userId = sub;
@@ -97,52 +107,52 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
 
     @Override
     public String getNickname() {
-        return null;
+        return nickName;
     }
 
     @Override
     public String getPreferredUsername() {
-        return null;
+        return preferredUsername;
     }
 
     @Override
     public String getProfile() {
-        return null;
+        return profileURL;
     }
 
     @Override
     public String getPicture() {
-        return null;
+        return pictureURL;
     }
 
     @Override
     public String getWebsite() {
-        return null;
+        return websiteURL;
     }
 
     @Override
     public String getGender() {
-        return null;
+        return gender;
     }
 
     @Override
     public String getBirthday() {
-        return null;
+        return birthdayYYYYYMMDD;
     }
 
     @Override
     public String getZoneInfo() {
-        return null;
+        return zoneInfo;
     }
 
     @Override
     public String getLocale() {
-        return null;
+        return locale;
     }
 
     @Override
     public Instant updatedAt() {
-        return null;
+        return updatedAt;
     }
 
     public static class OIDCUserDetailsBuilder {
@@ -153,6 +163,16 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
         private String givenName;
         private String middleName;
         private String familyName;
+        private String nickName;
+        private String preferredUsername;
+        private String birthday;
+        private String zoneInfo;
+        private String locale;
+        private String profileURL;
+        private String pictureURL;
+        private String websiteURL;
+        private String gender;
+        private Instant updatedAt;
 
         public OIDCUserDetailsBuilder() {
         }
@@ -168,11 +188,49 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
             return this;
         }
 
-        public OIDCUserDetailsBuilder names(String name, String givenName, String middleName, String familyName) {
+        public OIDCUserDetailsBuilder names(String name, String givenName, String middleName, String familyName, String nickName) {
             this.name = name;
             this.givenName = givenName;
             this.middleName = middleName;
             this.familyName = familyName;
+            this.nickName = nickName;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder preferredUsername(String preferredUsername) {
+            this.preferredUsername = preferredUsername;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder birthday(String birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder zoneInfo(String zoneInfo) {
+            this.zoneInfo = zoneInfo;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder locale(String locale) {
+            this.locale = locale;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder urls(String pictureURL, String profileURL, String websiteURL) {
+            this.pictureURL = pictureURL;
+            this.profileURL = profileURL;
+            this.websiteURL = websiteURL;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder gender(String gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public OIDCUserDetailsBuilder updatedAt(Instant updatedAt) {
+            this.updatedAt = updatedAt;
             return this;
         }
 
@@ -184,6 +242,16 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
             oidcUserDetails.givenName = this.givenName;
             oidcUserDetails.middleName = this.middleName;
             oidcUserDetails.familyName = this.familyName;
+            oidcUserDetails.nickName = this.nickName;
+            oidcUserDetails.preferredUsername = this.preferredUsername;
+            oidcUserDetails.birthdayYYYYYMMDD = this.birthday;
+            oidcUserDetails.updatedAt = this.updatedAt;
+            oidcUserDetails.zoneInfo = this.zoneInfo;
+            oidcUserDetails.locale = this.locale;
+            oidcUserDetails.profileURL = this.profileURL;
+            oidcUserDetails.pictureURL = this.pictureURL;
+            oidcUserDetails.websiteURL = this.websiteURL;
+            oidcUserDetails.gender = this.gender;
             return oidcUserDetails;
         }
     }
