@@ -4,5 +4,6 @@ public enum Scope {
     openid,
     email,
     address,
-    phone
+    phone,
+    profile
 }
