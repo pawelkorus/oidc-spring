@@ -63,7 +63,7 @@ public class ClaimAssertionsTest {
 
     @Test(expected = ClaimValueMismatchException.class)
     public void assertDateBefore_should_fail_if_claim_date_is_after_now() throws Exception {
-        Instant actual = Instant.now().plus(Duration.ofMinutes(2));
+        Instant actual = Instant.now().plus(Duration.ofMinutes(7));
         when(idTokenPayload.getAsInstant(TEST_CLAIM)).thenReturn(actual);
         ClaimAssertions.assertDateBeforeNow(TEST_CLAIM).check(idTokenPayload);
     }
@@ -78,7 +78,7 @@ public class ClaimAssertionsTest {
 
     @Test(expected = ClaimValueMismatchException.class)
     public void assertDateAfter_should_fail_if_claim_value_is_before_now() throws Exception {
-        Instant actual = Instant.now().minus(Duration.ofMinutes(2));
+        Instant actual = Instant.now().minus(Duration.ofMinutes(7));
         when(idTokenPayload.getAsInstant(TEST_CLAIM)).thenReturn(actual);
         ClaimAssertions.assertDateAfterNow(TEST_CLAIM).check(idTokenPayload);
         verify(idTokenPayload).getAsInstant(TEST_CLAIM);
