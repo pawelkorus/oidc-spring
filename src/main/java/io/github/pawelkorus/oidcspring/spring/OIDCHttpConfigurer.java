@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -21,6 +23,8 @@ import java.util.function.Supplier;
 public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigurer, HttpSecurity> {
 
     private List<IdentityProviderConfigurer> identityProviderConfigurers = new ArrayList<>();
+
+    private AuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
 
     @Override
     public void init(HttpSecurity builder) throws Exception {
@@ -49,6 +53,7 @@ public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigure
             OIDCAuthenticationProvider authenticationProvider = new OIDCAuthenticationProvider(providerMetadata, oidcUserDetailsService, tokenPayloadAssertions);
 
             OIDCAuthFilter openIdConnectFilter = new OIDCAuthFilter(identityProviderConfigurer.requestMatcher(), new OAuth2RestTemplate(identityProviderResourceDetails, oAuth2ClientContext));
+            openIdConnectFilter.setAuthenticationSuccessHandler(successHandler);
 
             builder
                 .authenticationProvider(authenticationProvider)
@@ -72,6 +77,11 @@ public class OIDCHttpConfigurer extends AbstractHttpConfigurer<OIDCHttpConfigure
         IdentityProviderConfigurer identityProviderConfigurer = new IdentityProviderConfigurer(requestMatcher);
         identityProviderConfigurers.add(identityProviderConfigurer);
         return identityProviderConfigurer;
+    }
+
+    public OIDCHttpConfigurer successHandler(AuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+        return this;
     }
 
     public static OIDCHttpConfigurer opendIdConnect() {
