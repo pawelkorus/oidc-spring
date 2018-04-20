@@ -182,9 +182,9 @@ public class OIDCUserDetails implements UserDetails, UserEmailInfo, UserProfileI
             return this;
         }
 
-        public OIDCUserDetailsBuilder email(String email, boolean verified) {
+        public OIDCUserDetailsBuilder email(String email, Boolean verified) {
             this.email = email;
-            this.emailVerified = verified;
+            this.emailVerified = verified == null ? false : verified;
             return this;
         }
 
